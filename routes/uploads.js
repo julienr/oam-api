@@ -402,7 +402,18 @@ function updateUploadMetadata (request, imageId) {
       })
       .then(obj => obj.oamSync())
       .then(() => true);
-    return metaCreate;
+
+    const updateImageMeta = db.collection('images').updateOne({
+      _id: imageId
+      }, {
+        $set: {
+          metadata: meta
+        },
+        $currentDate: {
+          stoppedAt: true
+        }
+      })
+    return Promise.all([metaCreate, updateImageMeta])
   });
 }
 
